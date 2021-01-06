@@ -8,8 +8,8 @@ This project is a starting point for a Flutter application.
 <img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen1.png" width="240"/>
 </div>
 
-<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screenshot2.png" width="240"/>
-<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screenshot3.png" width="240"/>
-<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screenshot4.png" width="240"/>
-<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screenshot5.png" width="240"/>
-<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screenshot6.png" width="240"/>
+<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen2.png" width="240"/>
+<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen3.png" width="240"/>
+<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen4.png" width="240"/>
+<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen5.png" width="240"/>
+<img src="https://github.com/prof22/Flutter_Real_estate_App/blob/main/screens/screen7.png" width="240"/>
