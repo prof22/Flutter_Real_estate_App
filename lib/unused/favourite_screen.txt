@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+
+class Favourite extends StatefulWidget {
+  @override
+  _FavouriteState createState() => _FavouriteState();
+}
+
+class _FavouriteState extends State<Favourite> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title:Text("favourite")
+      ),
+        body:Center(
+          child: Text("Working Alert"),
+        )
+        // :showDialog(context: context, builder:(_) => new AlertDialog(title: Text("Login to Access Favourite"), content: Text('login')))
+    );
+  }
+}

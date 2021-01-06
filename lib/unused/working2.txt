@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Properties.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:real_estate/screen/property_detail.dart';
+
+I/flutter (32278): SocketException: OS Error: Connection timed out, errno = 110, address = 192.168.8.100, port = 52630
+I/flutter (32278): SocketException: OS Error: Connection timed out, errno = 110, address = 192.168.8.100, port = 52631
+I/flutter (32278): SocketException: OS Error: Connection timed out, errno = 110, address = 192.168.8.100, port = 52632
+
+class HomeProperties extends StatefulWidget {
+  final List<Properties> propertiesList;
+  HomeProperties({this.propertiesList});
+  @override
+  _HomePropertiesState createState() => _HomePropertiesState();
+}
+
+class _HomePropertiesState extends State<HomeProperties> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: OrientationBuilder(
+        builder: (context, orientation){
+          return ListView(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisSize: MainAxisSize.max,
+            // crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
+            // crossAxisSpacing: 2.0,
+            // scrollDirection: Axis.horizontal,
+          //  physics: ClampingScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
+            children:List.generate(this.widget.propertiesList.length,(i){
+            final x = this.widget.propertiesList[i];
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height:100,
+              decoration: BoxDecoration(
+             borderRadius: BorderRadius.only(topLeft:Radius.circular(30.0), topRight: Radius.circular(30.0)
+             ),
+             image: DecorationImage
+             (
+               image: NetworkImage(widget.propertiesList[i].image
+               
+               ),
+               fit: BoxFit.cover)
+              ),
+              child: Padding(padding: EdgeInsets.only(
+             top: 65.0,
+             left: 130.0
+              ),
+              child: Card(
+             margin: EdgeInsets.all(1.0),
+             elevation: 5.0,
+             color: Colors.grey[700],
+             child: Text('Price: ${this.widget.propertiesList[i].city}',
+              textAlign: TextAlign.center, 
+              style:TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white)),
+              )
+              ),
+            );
+            }));
+            }
+            ));
+        }
+
+
+             SizedBox(
+                       height: MediaQuery.of(context).size.height / 3.9,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: this.items.length,
+                                    itemBuilder: (context, index) {
+                                      return Row(
+                                        children: <Widget>[
+                                          Image.network(this.displayImage[index].toString())
+                                        ],
+                                      );
+
+                                
+
+                                    }),
+                              )
+}

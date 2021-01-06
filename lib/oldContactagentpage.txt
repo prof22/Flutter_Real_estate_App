@@ -1,0 +1,43 @@
+  Row(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                     CircleAvatar(
+                                 backgroundImage:
+                                     NetworkImage(this.widget.propertyImage),
+                               ),
+                               SizedBox(width: 30.0,),
+                   Column(
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                               children: <Widget>[
+                                   Text('Mr. ${this.widget.agentName}'),
+                                      SizedBox(height: 20.0,),
+                                   Text('${this.widget.agentEmail}'),
+                                   Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     children: <Widget>[
+                                       Text("Real Estate Agent"),
+                                       Expanded(
+                                         child: Text('Flat Agent')  
+                                       ),
+                                        Expanded(
+                                         child: Text('Developer')  
+                                       ),
+                                     ],
+                                   ),
+                                   Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     children: <Widget>[
+                                       Text("Call"),
+                                       Expanded(
+                                         child: Text('Message')  
+                                       ),
+                                        Expanded(
+                                         child: Text('Address')  
+                                       ),
+                                     ],
+                                   )
+                               ],
+                             )
+                             ],
+                ),
+              ],

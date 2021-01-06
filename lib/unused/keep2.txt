@@ -1,0 +1,139 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:real_estate/services/property_service.dart';
+import 'package:real_estate/widget/home_featured_properties.dart';
+import 'package:real_estate/widget/home_property.dart';
+
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  PropertyService _propertyService = PropertyService();
+    var imageUrl = "http://192.168.8.100:8000/storage/property/";
+
+
+
+  List<Property> _propertyList = List<Property>();
+   
+    @override
+    void initState() { 
+      super.initState();
+      _getAllFeaturedProperties();
+    }
+
+  _getAllFeaturedProperties() async{
+    var featuredProperties = await _propertyService.getfeaturedProperties();
+    var result = json.decode(featuredProperties.body);
+    print(result);
+    result['data'].forEach((data){
+      var model = Property();
+      model.id = data['id'];
+      model.title = data['title'];
+      model.price = data['price'];
+      model.purpose = data['purpose'];
+      model.type = data['type'];
+      model.image = imageUrl+data['image'];
+      model.bedroom = data['bedroom'];
+      model.bathroom = data['bathroom'];
+      model.address = data['address'];
+      model.area = data['area'];
+      model.description = data['description'];
+      model.floorPlan = data['floor_plan'];
+      model.nearBy = data['nearby'];
+
+      setState(() {
+        _propertyList.add(model);
+      });
+    });
+  }
+ 
+  @override
+
+  Widget build(BuildContext context) {
+    var outlineInputBorder = OutlineInputBorder(
+                           borderRadius: BorderRadius.circular(30.0),
+                           borderSide: BorderSide(color:Colors.transparent),
+                         );
+        return Scaffold(
+          // appBar: new AppBar(
+          //   title: new Text('Real Estate..')
+          // ),
+          backgroundColor: Color(0xfff7f7f7),
+          body: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: SafeArea(
+               child: ListView(                 
+                 children:<Widget>[
+                   Container(
+                     height: MediaQuery.of(context).size.height /3.5,
+                     width: MediaQuery.of(context).size.width,
+                     decoration: BoxDecoration(
+                      //  color: Colors.green[300],
+                      borderRadius: BorderRadius.only(bottomLeft:Radius.circular(40.0), bottomRight:Radius.circular(40.0)),
+                       image: DecorationImage(
+                         image: AssetImage("assets/images/img17.jpg"),
+                         fit: BoxFit.cover,
+                         
+                        )
+                     ),
+                   child: Padding(
+                 padding: const EdgeInsets.only(left:16.0, right: 16.0, bottom: 16.0),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: <Widget>[
+                     SizedBox(height:21.0),
+                   Text(
+                       "Find\nThe Best Property", 
+                   style: TextStyle(
+                     fontWeight: FontWeight.bold,
+                     fontSize: 24.0
+                     ),),
+                   SizedBox(height:18.0),
+                     Material(
+                       elevation: 3.0,
+                       shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(30.0)
+                       ),
+                          child: TextField(
+                         style: TextStyle(fontSize: 12.0),
+                         decoration: InputDecoration(
+                           prefixIcon: Icon(Icons.search, color:Colors.grey[400]),
+                           hintStyle: TextStyle(color:Colors.grey[400]),
+                           filled: true,
+                           fillColor: Colors.white,
+                           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                           border: outlineInputBorder,
+                           enabledBorder: outlineInputBorder,
+                           focusedBorder: outlineInputBorder,
+                       hintText: "Try Search Location"
+                     ),
+                     ),
+                   ),
+                   ],
+                 ),
+                   ),
+                   ),
+                   
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text('Featured Properties'),
+                ),
+                HomeFeaturedProperties(propertyList: _propertyList,),
+                SizedBox(height:20.0),
+                HomeProperty(propertyList: _propertyList,)
+                 
+         ]
+       ),
+     
+      ),
+            ),
+          ),
+    );
+  }
+}

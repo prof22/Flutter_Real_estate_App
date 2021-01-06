@@ -1,0 +1,89 @@
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+// import 'package:flutter_html/flutter_html.dart';
+
+
+
+class HomeProperty extends StatefulWidget {
+  final List<Property> propertyList;
+  HomeProperty({this.propertyList});
+  @override
+  _HomePropertyState createState() => _HomePropertyState();
+}
+
+class _HomePropertyState extends State<HomeProperty> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: OrientationBuilder(
+        builder: (context, orientation){
+          return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: orientation == Orientation.portrait ? 2 : 3), 
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+           physics: ClampingScrollPhysics(),
+            itemCount: this.widget.propertyList.length,
+            itemBuilder: (context, i)
+            {
+            final x = this.widget.propertyList[i];
+            return Card(
+               shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)
+                  ),
+              child: Column(
+              children: <Widget>[
+                 Container(
+                width:200.0,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft:Radius.circular(30.0), topRight: Radius.circular(30.0)
+                  ),
+                  image: DecorationImage
+                  (
+                    image: NetworkImage(widget.propertyList[i].image
+                    
+                    ),
+                    fit: BoxFit.cover)
+                ),
+                child: Padding(padding: EdgeInsets.only(
+                  top: 65.0,
+                  left: 130.0
+                ),
+                child: Card(
+                  margin: EdgeInsets.all(1.0),
+                  elevation: 5.0,
+                  color: Colors.grey[700],
+                  child: Text('Price: ${this.widget.propertyList[i].price}', textAlign: TextAlign.center, style:TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                )
+                ),
+                 ),
+                Text('${x.title}'),
+                Container(
+                padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                width:200.0,
+                color: Colors.grey,
+                child:Text(x.title, 
+                textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+              ),
+             
+              Row(  
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                children: <Widget>[
+                  Text('Type: ${x.type}'),
+                  //  Text('Purpose: ${x.purpose}'),   
+                ],
+                
+              ),
+             
+              ],
+            ));
+            }
+            
+            );
+        }
+
+      ),
+    );
+  }
+}

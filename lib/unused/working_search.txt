@@ -1,0 +1,92 @@
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Properties.dart';
+import 'package:real_estate/services/declarations.dart';
+import 'package:real_estate/services/properties_service.dart';
+import 'package:real_estate/widget/header.dart';
+
+class Search extends StatefulWidget {
+   final List<Properties> propertiesList;
+   Search({this.propertiesList});
+  @override
+  _SearchState createState() => _SearchState();
+}
+
+class _SearchState extends State<Search> {
+  List<Properties> _propertiesList = List<Properties>();
+     PropertiesService _propertiesService = PropertiesService();
+  String _mySelection;
+  bool _loading = false;
+  @override
+  void initState() {
+    super.initState();
+    _getAllProperties();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: header(context, isAppTitle: false, titleText: "Advanced Search"),
+          body: Container(
+        child: new Center(
+          child: new DropdownButton(
+            items: _propertiesList.map((item) {
+              return new DropdownMenuItem(
+                child: new Text(item.city),
+                value: item.id.toString(),
+              );
+            }).toList(),
+            onChanged: (newVal) {
+              setState(() {
+                _mySelection = newVal;
+              });
+            },
+            value: _mySelection,
+          ),
+        ),
+      ),
+    );
+  }
+   _getAllProperties() async {
+    var responseJson = await _propertiesService.bedroom();
+    if (responseJson == null ||
+        responseJson == 'Unauthenticated' ||
+        responseJson == 'SocketException' ||
+        responseJson == 'NetworkError') {
+      // var result = json.decode(responseJson.body);
+      // print(result);
+      if(mounted){
+      setState(() {
+        _loading = true;
+      });}
+    } else {
+      responseJson['data'].forEach((data) {
+        var model = Properties();
+        model.id = data['id'];
+        model.title = data['title'];
+        model.price = data['price'];
+        model.purpose = data['purpose'];
+        model.type = data['type'];
+        model.image = imgUrl.imageUrl + data['image'];
+        model.bedroom = data['bedroom'];
+        model.bathroom = data['bathroom'];
+        model.address = data['address'];
+        model.city = data['city'];
+        model.area = data['area'];
+        model.description = data['description'];
+        model.floorPlan = data['floor_plan'];
+        model.nearBy = data['nearby'];
+        model.agentId = data['agent_id'];
+        if(mounted){
+        setState(() {
+          _loading = false;
+          _propertiesList.add(model);
+        });
+        }
+      });
+    }
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _getAllProperties();
+  }
+}

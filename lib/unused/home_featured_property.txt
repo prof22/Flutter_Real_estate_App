@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+
+class HomeFeaturedProperty extends StatefulWidget {
+  final String propertyTitle;
+  final String propertyImage;
+  final int propertyPrice;
+  final String propertyType;
+  final String propertyPurpose;
+HomeFeaturedProperty({this.propertyTitle, this.propertyImage, this.propertyPrice, this.propertyPurpose, this.propertyType});
+
+  @override
+  _HomeFeaturedPropertyState createState() => _HomeFeaturedPropertyState();
+}
+
+class _HomeFeaturedPropertyState extends State<HomeFeaturedProperty> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 190.0,
+      height: 260.0,
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            Text(this.widget.propertyTitle),
+            Image.network(widget.propertyImage, width:190.0, height:160.0),
+            Row(
+              children: <Widget>[
+                Text('Price: ${this.widget.propertyPrice}'),
+                Text('Type: ${this.widget.propertyType}'),
+                Text('Purpose: ${this.widget.propertyPurpose}')
+              ],
+            )
+         
+          ],
+        ),
+      ),
+    );
+  }
+}

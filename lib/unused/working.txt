@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:real_estate/screen/property_detail.dart';
+
+
+
+class HomeProperty extends StatefulWidget {
+  final List<Property> propertyList;
+  HomeProperty({this.propertyList});
+  @override
+  _HomePropertyState createState() => _HomePropertyState();
+}
+
+class _HomePropertyState extends State<HomeProperty> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: OrientationBuilder(
+        builder: (context, orientation){
+          return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: orientation == Orientation.portrait ? 2 : 3), 
+            scrollDirection: Axis.vertical,
+           physics: ClampingScrollPhysics(),
+            itemCount: this.widget.propertyList.length,
+            itemBuilder: (context, i)
+            {
+            final x = this.widget.propertyList[i];
+            return Card(child: Column(
+              children: <Widget>[
+                Text('${x.title}'),
+              ],
+            ));
+            }
+            
+            );
+        }
+
+      ),
+    );
+  }
+}

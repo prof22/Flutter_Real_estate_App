@@ -1,0 +1,132 @@
+import 'package:flutter/material.dart';
+import 'package:real_estate_app/models/User.dart';
+import 'package:real_estate_app/screen/home_screen.dart';
+import 'package:real_estate_app/services/logout_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../changepassword_screen.dart';
+import '../message_screen.dart';
+import '../profile_screen.dart';
+import '../user_dashboard.dart';
+
+class DrawerWidget extends StatefulWidget {
+  @override
+  _DrawerWidgetState createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends State<DrawerWidget> {
+  List<User> _usersList = List<User>();
+  var  myName, myEmail, myUsername, aboutMe, myPic;
+
+  logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var authToken = prefs.getString('token');
+    var logoutService = LogOutService();
+    logoutService.logout(authToken);
+    prefs.remove("token");
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HomeScreen()));
+  }
+
+Future<dynamic> getDetails() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+      myName = prefs.getString('myName');
+      myEmail = prefs.getString('myEmail');
+      myUsername = prefs.getString('myUsername');
+      aboutMe = prefs.getString('aboutMe');
+      myPic = prefs.getString('myPic');
+    print('My name is $myName');
+}
+
+@override
+void initState() { 
+  super.initState();
+  getDetails();
+}
+
+@override
+  void dispose() {
+    super.dispose();
+    getDetails();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      elevation: 5.0,
+      child: ListView(
+        // children: List.generate(this._usersList.length, (i) {
+          // return 
+          children:<Widget>[
+          Column(
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('$myUsername'),
+                accountEmail: Text('$myEmail'),
+                // currentAccountPicture: Container(
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     image: DecorationImage(
+                //       fit: BoxFit.fill,
+                //       image: NetworkImage('NOne')
+                //     )
+                //   ),
+                // )
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                },
+                leading: Icon(Icons.dashboard),
+                title: Text("Home Page"),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DashboardScreen()));
+                },
+                leading: Icon(Icons.dashboard),
+                title: Text("Dashboard"),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfileScreen()));
+                },
+                leading: Icon(Icons.person),
+                title: Text("Profile"),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MessageScreen()));
+                },
+                leading: Icon(Icons.message),
+                title: Text("Messages"),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangePasswordScreen()));
+                },
+                leading: Icon(Icons.lock),
+                title: Text("Change Password"),
+              ),
+              ListTile(
+                onTap: () {
+                  logout(context);
+                },
+                leading: Icon(Icons.lock_open),
+                title: Text("Logout"),
+              )
+            ],
+          )]));
+  
+        // }),
+      
+  }
+}

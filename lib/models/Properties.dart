@@ -1,0 +1,21 @@
+class Properties{
+  int id;
+  String title;
+  String slug;
+  int price;
+  String purpose;
+  String type;
+  String image;
+  int bedroom;
+  int bathroom;
+  String city;
+  String address;
+  int area;
+  var description;
+  String floorPlan;
+  String nearBy;
+  int agentId;
+  int propertyCount;
+  double rating;
+  int badge;
+}

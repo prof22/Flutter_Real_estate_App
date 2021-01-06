@@ -1,0 +1,611 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/controller/comment_provider.dart';
+import 'package:real_estate_app/controller/comment_state.dart';
+import 'package:real_estate_app/models/Properties.dart';
+import 'package:real_estate_app/models/comment.dart';
+import 'package:real_estate_app/repository/declarations.dart';
+import 'package:real_estate_app/services/comment_count_services.dart';
+import 'package:real_estate_app/services/properties_service.dart';
+import 'package:real_estate_app/services/property_image_service.dart';
+import 'package:real_estate_app/services/property_service.dart';
+import 'package:real_estate_app/widget/Home_property_image.dart';
+import 'package:real_estate_app/widget/home_featured_properties.dart';
+import 'package:real_estate_app/widget/showDialog_redirect_to_admin.dart';
+
+class AgentDetail extends StatefulWidget {
+  final int agentId;
+  final String propertyImage;
+  final int propertyId;
+  final String agentName;
+  final String agentEmail;
+  final String propertySlug;
+  AgentDetail(
+      {this.agentId,
+      this.propertyImage,
+      this.propertyId,
+      this.agentName,
+      this.agentEmail, 
+      this.propertySlug});
+
+  @override
+  _AgentDetailState createState() => _AgentDetailState();
+}
+
+class _AgentDetailState extends State<AgentDetail> {
+  PropertyService _propertyService = PropertyService();
+  PropertiesService _propertiesService = PropertiesService();
+  PropertyImageService _propertyImageService = PropertyImageService();
+
+  // var imageUrl = "http://192.168.8.101:8000/storage/property/";
+
+  List<Properties> _propertiesList = List<Properties>();
+    List<Comments> _commentLists = List<Comments>();
+    bool loaded = false;
+   
+       
+  @override
+  void initState() {
+    _getAllFeaturedProperties();
+    // actionSearch();
+    Future.microtask(()=>{
+      Provider.of<CommentProvider>(context, listen: false).getAllComment(this.widget.propertySlug)
+    });
+    super.initState();
+  }
+ @override
+ void didChangeDependencies() {
+   
+  final comm = Provider.of<CommentProvider>(context, listen: true);
+  _commentLists = comm.commentLists;  
+  // print(_commentLists.length);
+  super.didChangeDependencies();
+ }
+//  void dependOnInheritedWidgetOfExactType()
+//  {
+//     actionSearch();
+//  }
+ 
+//    void actionSearch() {
+//     Provider.of<CommentProvider>(context, listen: false).getAllComment(this.widget.propertySlug);
+//   }
+  @override
+  void dispose() {
+    _getAllFeaturedProperties();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CommentProvider(),
+          child: Scaffold(
+        appBar: AppBar(
+          title: Text("Agent Detail"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(10.0),
+                child: Column(children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(this.widget.propertyImage),
+                      ),
+                      SizedBox(width: 20.0),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Mr. ${this.widget.agentName}'),
+                            Text('${this.widget.agentEmail}'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                              Text('Flat Agent |'),
+                              Text(' Developer'),
+
+                            ],),
+                            SizedBox(height: 20.0,),
+                               Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                              Text('Call |'),
+                              Text(' Message'),
+
+                            ],), 
+
+                          ]),
+                          SizedBox(height: 20.0,),
+                    ],
+                  )
+                ]),
+              ),
+              Text('Related Property'),
+               HomeFeaturedProperties(
+                            propertiesList: _propertiesList,
+                          ),
+              Text('City List'),
+              SizedBox(height: 20.0),
+              HomePropertyImage(
+                propertiesList: _propertiesList,
+              ),
+              Text('Review'),
+              AllComment(_commentLists),
+                Divider()
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  //  Container displayComment(BuildContext context)
+  // {
+  //   final _commentss = Provider.of<CommentProvider>(context).getAllComment(this.widget.propertySlug);
+  //   return Container(
+  //     child:Column(
+  //         children:List.generate(_commentss.commentList.length, (i) {
+  //         return Container(
+  //           child:Column(
+  //     children: <Widget>[
+  //       Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.start,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: <Widget>[
+  //              CircleAvatar(
+  //               backgroundImage:
+  //                   NetworkImage(_commentss.commentList[i].image),
+                  
+  //             ),
+  //             Padding(
+  //               padding: const EdgeInsets.only(left:16.0, right:8.0),
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.start,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: <Widget>[
+  //                    Text('${_commentss.commentList[i].userName}', style: TextStyle(color: Colors.grey[600])),
+  //                   Text('${_commentss.commentList[i].body}'),
+                 
+  //                 ],
+  //               ),
+  //             )
+  //           ],
+  //         ),
+  //       ),
+        
+  //     ],
+  //           )
+  //         );
+  //         }
+  //       )
+  //       )
+  //   );
+
+  // }
+
+
+  _getAllFeaturedProperties() async {
+    var responseJson = await _propertyService.getfeaturedProperties();
+    if (responseJson == null ||
+        responseJson == 'Unauthenticated' ||
+        responseJson == 'SocketException' ||
+        responseJson == 'NetworkError') {
+      // var result = json.decode(responseJson.body);
+      // print(result);
+    } else {
+      responseJson['data'].forEach((data) {
+        var model = Properties();
+        model.id = data['id'];
+        model.title = data['title'];
+        model.price = data['price'];
+        model.purpose = data['purpose'];
+        model.type = data['type'];
+        model.image = Imgurl.imageUrl + data['image'];
+        model.bedroom = data['bedroom'];
+        model.bathroom = data['bathroom'];
+        model.address = data['address'];
+        model.city = data['city'];
+        model.area = data['area'];
+        model.slug = data['slug'];
+        model.description = data['description'];
+        model.floorPlan = data['floor_plan'];
+        model.nearBy = data['nearby'];
+        model.agentId = data['agent_id'];
+        print(Imgurl.imageUrl + data['image']);
+        if (mounted) {
+          setState(() {
+            _propertiesList.add(model);
+          });
+        }
+      });
+    }
+  }
+  // getComment() async{
+  //   var getComment = CommentCountService();
+  //   var response = await getComment.getComments(this.widget.propertySlug);
+  //   // print(response.statusCode);
+  //   if (response.statusCode == 200) {
+  //     var result = json.decode(response.body);
+  //     result['users'].forEach((user) {
+  //       var model = Comments();
+  //       // model.id = user['id'];
+  //       model.body = user['body'];
+  //       model.userName = user['users']['name'];
+  //       model.image = Imgurl.usersUrl + user['users']['image'];
+  //       print(Imgurl.usersUrl + user['users']['image']);
+  //       if(mounted){
+  //       setState(() {
+  //         _commentLists.add(model);
+  //       });
+  //       }
+  //     });
+  //   }
+
+  // }
+}
+class AllComment extends StatelessWidget {
+  AllComment(this.commentList);
+
+  final List commentList;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child:Column(
+          children:List.generate(commentList.length, (i) {
+          return Container(
+            child:Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+               CircleAvatar(
+                backgroundImage:
+                    NetworkImage(commentList[i].image),
+                  
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left:16.0, right:8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                     Text('${commentList[i].userName}', style: TextStyle(color: Colors.grey[600])),
+                    Text('${commentList[i].body}'),
+                 
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        
+      ],
+            )
+          );
+          }
+        )
+        )
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate_app/controller/comment_provider.dart';
+import 'package:real_estate_app/controller/comment_state.dart';
+import 'package:real_estate_app/models/Properties.dart';
+import 'package:real_estate_app/models/comment.dart';
+import 'package:real_estate_app/repository/declarations.dart';
+import 'package:real_estate_app/services/comment_count_services.dart';
+import 'package:real_estate_app/services/properties_service.dart';
+import 'package:real_estate_app/services/property_image_service.dart';
+import 'package:real_estate_app/services/property_service.dart';
+import 'package:real_estate_app/widget/Home_property_image.dart';
+import 'package:real_estate_app/widget/home_featured_properties.dart';
+import 'package:real_estate_app/widget/showDialog_redirect_to_admin.dart';
+
+class AgentDetail extends StatefulWidget {
+  final int agentId;
+  final String propertyImage;
+  final int propertyId;
+  final String agentName;
+  final String agentEmail;
+  final String propertySlug;
+  AgentDetail(
+      {this.agentId,
+      this.propertyImage,
+      this.propertyId,
+      this.agentName,
+      this.agentEmail, 
+      this.propertySlug});
+
+  @override
+  _AgentDetailState createState() => _AgentDetailState();
+}
+
+class _AgentDetailState extends State<AgentDetail> {
+  PropertyService _propertyService = PropertyService();
+  PropertiesService _propertiesService = PropertiesService();
+  PropertyImageService _propertyImageService = PropertyImageService();
+
+  // var imageUrl = "http://192.168.8.101:8000/storage/property/";
+
+  List<Properties> _propertiesList = List<Properties>();
+    // List<Comments> _commentLists = List<Comments>();
+    bool loaded = false;
+   
+       
+  @override
+  void initState() {
+    _getAllFeaturedProperties();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _getAllFeaturedProperties();
+    getAllPost();
+    super.dispose();
+  }
+
+
+  getAllPost() async{
+     await Provider.of<CommentProvider>(context, listen: false).getAllComment(this.widget.propertySlug);
+  // List<Comments> _commentLists =  await Provider.of<CommentProvider>(context).getAllComment(this.widget.propertySlug);
+  //  Provider.of<CommentProvider>(context, listen: false).setData(_commentLists);
+  }
+  @override
+  Widget build(BuildContext context) {
+     getAllPost();
+    return  Scaffold(
+        appBar: AppBar(
+          title: Text("Agent Detail"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(10.0),
+                child: Column(children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(this.widget.propertyImage),
+                      ),
+                      SizedBox(width: 20.0),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Mr. ${this.widget.agentName}'),
+                            Text('${this.widget.agentEmail}'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                              Text('Flat Agent |'),
+                              Text(' Developer'),
+
+                            ],),
+                            SizedBox(height: 20.0,),
+                               Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                              Text('Call |'),
+                              Text(' Message'),
+
+                            ],), 
+
+                          ]),
+                          SizedBox(height: 20.0,),
+                    ],
+                  )
+                ]),
+              ),
+              Text('Related Property'),
+               HomeFeaturedProperties(
+                            propertiesList: _propertiesList,
+                          ),
+              Text('City List'),
+              SizedBox(height: 20.0),
+              HomePropertyImage(
+                propertiesList: _propertiesList,
+              ),
+              Text('Review'),
+              AllComment(),
+                Divider()
+            ],
+          ),
+        ));
+
+  }
+  //  Container displayComment(BuildContext context)
+  // {
+  //   final _commentss = Provider.of<CommentProvider>(context).getAllComment(this.widget.propertySlug);
+  //   return Container(
+  //     child:Column(
+  //         children:List.generate(_commentss.commentList.length, (i) {
+  //         return Container(
+  //           child:Column(
+  //     children: <Widget>[
+  //       Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.start,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: <Widget>[
+  //              CircleAvatar(
+  //               backgroundImage:
+  //                   NetworkImage(_commentss.commentList[i].image),
+                  
+  //             ),
+  //             Padding(
+  //               padding: const EdgeInsets.only(left:16.0, right:8.0),
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.start,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: <Widget>[
+  //                    Text('${_commentss.commentList[i].userName}', style: TextStyle(color: Colors.grey[600])),
+  //                   Text('${_commentss.commentList[i].body}'),
+                 
+  //                 ],
+  //               ),
+  //             )
+  //           ],
+  //         ),
+  //       ),
+        
+  //     ],
+  //           )
+  //         );
+  //         }
+  //       )
+  //       )
+  //   );
+
+  // }
+
+
+  _getAllFeaturedProperties() async {
+    var responseJson = await _propertyService.getfeaturedProperties();
+    if (responseJson == null ||
+        responseJson == 'Unauthenticated' ||
+        responseJson == 'SocketException' ||
+        responseJson == 'NetworkError') {
+      // var result = json.decode(responseJson.body);
+      // print(result);
+    } else {
+      responseJson['data'].forEach((data) {
+        var model = Properties();
+        model.id = data['id'];
+        model.title = data['title'];
+        model.price = data['price'];
+        model.purpose = data['purpose'];
+        model.type = data['type'];
+        model.image = Imgurl.imageUrl + data['image'];
+        model.bedroom = data['bedroom'];
+        model.bathroom = data['bathroom'];
+        model.address = data['address'];
+        model.city = data['city'];
+        model.area = data['area'];
+        model.slug = data['slug'];
+        model.description = data['description'];
+        model.floorPlan = data['floor_plan'];
+        model.nearBy = data['nearby'];
+        model.agentId = data['agent_id'];
+        print(Imgurl.imageUrl + data['image']);
+        if (mounted) {
+          setState(() {
+            _propertiesList.add(model);
+          });
+        }
+      });
+    }
+  }
+  // getComment() async{
+  //   var getComment = CommentCountService();
+  //   var response = await getComment.getComments(this.widget.propertySlug);
+  //   // print(response.statusCode);
+  //   if (response.statusCode == 200) {
+  //     var result = json.decode(response.body);
+  //     result['users'].forEach((user) {
+  //       var model = Comments();
+  //       // model.id = user['id'];
+  //       model.body = user['body'];
+  //       model.userName = user['users']['name'];
+  //       model.image = Imgurl.usersUrl + user['users']['image'];
+  //       print(Imgurl.usersUrl + user['users']['image']);
+  //       if(mounted){
+  //       setState(() {
+  //         _commentLists.add(model);
+  //       });
+  //       }
+  //     });
+  //   }
+
+  // }
+}
+class AllComment extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child:Provider.of<CommentProvider>(context).getData().length > 0 ? Column(
+          children:List.generate(Provider.of<CommentProvider>(context).getData().length, (i) {
+          return Container(
+            child:Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+               CircleAvatar(
+                backgroundImage:
+                    NetworkImage(Provider.of<CommentProvider>(context).getData()[i].image),
+                  
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left:16.0, right:8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                     Text('${Provider.of<CommentProvider>(context).getData()[i].userName}', style: TextStyle(color: Colors.grey[600])),
+                    Text('${Provider.of<CommentProvider>(context).getData()[i].body}'),
+                 
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        
+      ],
+            )
+          );
+          }
+        )
+        ): Center(
+          child: CircularProgressIndicator(),
+        )
+    );
+  }
+}

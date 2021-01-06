@@ -1,0 +1,376 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:real_estate/services/property_service.dart';
+import 'package:real_estate/widget/home_featured_properties.dart';
+import 'package:real_estate/widget/home_property.dart';
+
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  PropertyService _propertyService = PropertyService();
+    var imageUrl = "http://192.168.8.100:8000/storage/property/";
+
+
+
+  List<Property> _propertyList = List<Property>();
+   
+    @override
+    void initState() { 
+      super.initState();
+      // _getAllFeaturedProperties();
+    }
+
+  _getAllFeaturedProperties() async{
+    var featuredProperties = await _propertyService.getfeaturedProperties();
+    var result = json.decode(featuredProperties.body);
+    print(result);
+    result['data'].forEach((data){
+      var model = Property();
+      model.id = data['id'];
+      model.title = data['title'];
+      model.price = data['price'];
+      model.purpose = data['purpose'];
+      model.type = data['type'];
+      model.image = imageUrl+data['image'];
+      model.bedroom = data['bedroom'];
+      model.bathroom = data['bathroom'];
+      model.address = data['address'];
+      model.area = data['area'];
+      model.description = data['description'];
+      model.floorPlan = data['floor_plan'];
+      model.nearBy = data['nearby'];
+
+      setState(() {
+        _propertyList.add(model);
+      });
+    });
+  }
+ 
+  @override
+
+  Widget build(BuildContext context) {
+    var outlineInputBorder = OutlineInputBorder(
+                           borderRadius: BorderRadius.circular(30.0),
+                           borderSide: BorderSide(color:Colors.transparent),
+                         );
+        return Scaffold(
+         
+        body: SingleChildScrollView(
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Text(
+        'Headline',
+        style: TextStyle(fontSize: 18),
+      ),
+      SizedBox(
+        height: 200.0,
+        child: ListView.builder(
+          physics: ClampingScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: 15,
+          itemBuilder: (BuildContext context, int index) => Card(
+                child: Center(child: Text('Dummy Card Text')),
+              ),
+        ),
+      ),
+       SizedBox(
+        height: 200.0,
+        child: ListView.builder(
+          physics: ClampingScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: 15,
+          itemBuilder: (BuildContext context, int index) => Card(
+                child: Center(child: Text('Dummy Card Text 2')),
+              ),
+        ),
+      ),
+      Text(
+        'Demo Headline 2',
+        style: TextStyle(fontSize: 18),
+      ),
+      Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+      Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+      Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+      Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+      Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+       Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+       Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+
+       Card(
+        child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+      ),
+    ],
+  ),
+),
+    );
+  }
+}
+
+
+
+
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:real_estate/services/property_service.dart';
+import 'package:real_estate/widget/home_featured_properties.dart';
+import 'package:real_estate/widget/home_property.dart';
+
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  PropertyService _propertyService = PropertyService();
+    var imageUrl = "http://192.168.8.100:8000/storage/property/";
+
+
+
+  List<Property> _propertyList = List<Property>();
+   
+    @override
+    void initState() { 
+      super.initState();
+      // _getAllFeaturedProperties();
+    }
+
+  _getAllFeaturedProperties() async{
+    var featuredProperties = await _propertyService.getfeaturedProperties();
+    var result = json.decode(featuredProperties.body);
+    print(result);
+    result['data'].forEach((data){
+      var model = Property();
+      model.id = data['id'];
+      model.title = data['title'];
+      model.price = data['price'];
+      model.purpose = data['purpose'];
+      model.type = data['type'];
+      model.image = imageUrl+data['image'];
+      model.bedroom = data['bedroom'];
+      model.bathroom = data['bathroom'];
+      model.address = data['address'];
+      model.area = data['area'];
+      model.description = data['description'];
+      model.floorPlan = data['floor_plan'];
+      model.nearBy = data['nearby'];
+
+      setState(() {
+        _propertyList.add(model);
+      });
+    });
+  }
+ 
+  @override
+
+  Widget build(BuildContext context) {
+     var image = new Image.network("http://www.gstatic.com/webp/gallery/1.jpg");
+    var container = new Container(
+      child: image,
+      padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+      width: 180.0,
+      height: 200.0,
+    );
+    var outlineInputBorder = OutlineInputBorder(
+                           borderRadius: BorderRadius.circular(30.0),
+                           borderSide: BorderSide(color:Colors.transparent),
+                         );
+        return Scaffold(
+         
+        body: Scaffold(
+        body: Center(
+            child: new ListView.builder(
+          itemBuilder: (context, index) {
+            if (index == 0) { //first row is horizontal scroll
+              var singleChildScrollView = SingleChildScrollView(
+                  child: Row(
+                    children: <Widget>[
+                      container,
+                      container,
+                      container,
+                    ],
+                  ),
+                  scrollDirection: Axis.horizontal);
+              return singleChildScrollView;
+            } else {
+              return new Row(
+                children: <Widget>[container, container],
+              );
+            }
+          },
+          itemCount: 10, // 9 rows of AllGenresAndMoods + 1 row of PopularGenresAndMoods
+        )),
+      ),
+    
+    );
+  }
+}
+
+container
+OrientationBuilder(
+  builder: (BuildContext context, Orientation orientation) {
+    return GridView.builder(
+      itemcount:list.length
+      itemBuilder:(context, index){
+        final x = list[index]
+        return card(
+      child: Column(
+        children
+        expanded
+        child-image,
+        text
+      ),
+      )
+      }
+    );
+  },
+),
+
+
+
+
+import 'package:flutter/material.dart';
+import 'package:real_estate/models/Property.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:real_estate/screen/property_detail.dart';
+
+
+
+class HomeProperty extends StatefulWidget {
+  final List<Property> propertyList;
+  HomeProperty({this.propertyList});
+  @override
+  _HomePropertyState createState() => _HomePropertyState();
+}
+
+class _HomePropertyState extends State<HomeProperty> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: this.widget.propertyList.length,
+        itemBuilder:(context, index){
+          return Container(
+      width: 200.0,
+      height: 260.0,
+      
+      child: InkWell(
+        onTap: (){
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => PropertyDetail(this.propertyTitle, this.widget.propertyImage, this.widget.propertyPrice, this.widget.propertyPurpose, this.widget.propertyType)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => PropertyDetail(propertyId:this.widget.propertyList[index].id, propertyTitle: this.widget.propertyList[index].title, propertyImage: this.widget.propertyList[index].image, propertyPrice: this.widget.propertyList[index].price, propertyPurpose: this.widget.propertyList[index].purpose, propertyType: this.widget.propertyList[index].type, propertyDescription:this.widget.propertyList[index].description)));
+        },
+        child: Card(
+           shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)
+                  ),
+          elevation: 5.0,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width:200.0,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft:Radius.circular(30.0), topRight: Radius.circular(30.0)
+                  ),
+                  image: DecorationImage
+                  (
+                    image: NetworkImage(widget.propertyList[index].image
+                    
+                    ),
+                    fit: BoxFit.cover)
+                ),
+                child: Padding(padding: EdgeInsets.only(
+                  top: 65.0,
+                  left: 130.0
+                ),
+                child: Card(
+                  margin: EdgeInsets.all(1.0),
+                  elevation: 5.0,
+                  color: Colors.grey[700],
+                  child: Text('Price: ${this.widget.propertyList[index].price}', textAlign: TextAlign.center, style:TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                )
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                width:200.0,
+                color: Colors.grey,
+                child:Text(this.widget.propertyList[index].title, 
+                textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+              ),
+             
+              Row(  
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                children: <Widget>[
+                  Text('Type: ${this.widget.propertyList[index].type}'),
+                   Text('Purpose: ${this.widget.propertyList[index].purpose}'),   
+                ],
+                
+              ),
+             
+            //  Html(data:this.widget.propertyList[index].description),
+               
+            ],
+          ),
+        ),
+      ),
+    );
+         
+        },
+    ),
+    );
+  }
+}
+
+
+
+Exception has occurred.
+FlutterError (setState() called after dispose(): _PropertyDetailState#aed46(lifecycle state: defunct, not mounted)
+This error happens if you call setState() on a State object for a widget that no longer appears in the widget tree (e.g., whose parent widget no longer includes the widget in its build). This error can occur when code calls setState() from a timer or an animation callback.
+The preferred solution is to cancel the timer or stop listening to the animation in the dispose() callback. Another solution is to check the "mounted" property of this object before calling setState() to ensure the object is still in the tree.
+This error might indicate a memory leak if setState() is being called because another object is retaining a reference to this State object after it has been removed from the tree. To avoid memory leaks, consider breaking the reference to this object during dispose().)
+
+
+Bottom Overflow by 1040 pixel
+
+
+Scaffold BuildAuthScreen(){
+  return Scafford(
+    body:PageView(
+      children:<widget>[
+        timeline(),
+        ActivityFeed(),
+        Upload()
+        search()
+        Profile()
+      ]
+    )
+  )
+}

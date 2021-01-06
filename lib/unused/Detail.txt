@@ -1,0 +1,34 @@
+ 
+ import 'package:real_estate/models/propertyimage.dart';
+import 'package:real_estate/services/property_image_service.dart';
+  List<PropertyImage> _propertyImageList = List<PropertyImage>();
+
+getPropertyImage() async {
+    var responseJson = await PropertyImageService().allpropertyImage();
+    if (responseJson == null ||
+        responseJson == 'Unauthenticated' ||
+        responseJson == 'SocketException' ||
+        responseJson == 'NetworkError') {
+      // var result = json.decode(responseJson.body);
+      // print(result);
+    } else {
+      responseJson['data'].forEach((data) {
+        var model = PropertyImage();
+        model.id = data['id'];
+        model.title = data['title'];
+        model.price = data['price'];
+        model.purpose = data['purpose'];
+        model.type = data['type'];
+        model.image = data['image'];
+        model.bedroom = data['bedroom'];
+        model.bathroom = data['bathroom'];
+        model.address = data['address'];
+        model.city = data['city'];
+        model.area = data['area'];
+        model.description = data['description'];
+        model.floorPlan = data['floor_plan'];
+        model.nearBy = data['nearby'];
+        _propertyImageList.add(model);
+      });
+    }
+  }

@@ -1,0 +1,3 @@
+class SliderModel{
+  String image;
+}

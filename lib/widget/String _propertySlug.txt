@@ -1,0 +1,9 @@
+    String _propertySlug;
+                    for(var slug in homeproperties.data)
+                {
+                     _propertySlug = slug.slug;
+                }
+             return  HomeProperties(
+                      propertiesList: homeproperties.data,
+                      propertySlug:_propertySlug,
+                  );
